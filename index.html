@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Your Experience – SOW</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-color: #fcfbf8;
+  --card-bg: #ffffff;
+  --ink: #1f1811;
+  --muted: #8c8279;
+  --accent: #0284c7; /* Changed accent to blue for distinction, change hex if needed */
+  --accent-light: #f0f9ff;
+  --border: #ece7e1;
+  
+  /* Status Colors */
+  --red: #e11d48;
+  --red-l: #ffe4e6;
+  --amber: #f59e0b;
+  --amber-l: #fef3c7;
+  --green: #10b981;
+  --green-l: #d1fae5;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg-color);
+  background-image: radial-gradient(#ece7e1 1px, transparent 0);
+  background-size: 32px 32px;
+  min-height: 100vh;
+  color: var(--ink);
+  padding-bottom: 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header { padding: 48px 24px 32px; text-align: center; position: relative; }
+.brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+  background: var(--card-bg); padding: 6px 16px;
+  border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  border: 1px solid var(--border);
+}
+.brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.header h1 { font-family: 'DM Serif Display', serif; font-size: 2.4rem; line-height: 1.1; color: var(--ink); margin-bottom: 12px; }
+.header h1 em { font-style: italic; color: var(--accent); }
+.header p { font-size: 0.95rem; color: var(--muted); max-width: 420px; margin: 0 auto; line-height: 1.6; }
+
+/* Wrap & Cards */
+.wrap { max-width: 580px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+.card {
+  background: var(--card-bg); border-radius: 24px;
+  border: 1px solid rgba(236, 231, 225, 0.6); padding: 32px;
+  margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.01);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:focus-within, .card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.02); transform: translateY(-2px); }
+
+/* Progress */
+.q-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.q-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.progress-bar { width: 80px; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+.q-text { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--ink); margin-bottom: 24px; line-height: 1.3; }
+
+/* NPS Track */
+.nps-track { display: flex; flex-direction: column; gap: 12px; }
+.nps-nums { display: flex; gap: 6px; flex-wrap: nowrap; justify-content: space-between; }
+.nps-btn {
+  flex: 1; aspect-ratio: 1; min-width: 0; border: 1px solid var(--border);
+  border-radius: 12px; background: #faf9f7; cursor: pointer;
+  font-size: 0.9rem; font-weight: 600; color: var(--muted); 
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  font-family: 'DM Sans', sans-serif;
+}
+.nps-btn:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.05); }
+.nps-btn:active { transform: scale(0.95); }
+.nps-btn.sel-red { background: var(--red-l); border-color: var(--red); color: var(--red); transform: scale(1.08); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15); }
+.nps-btn.sel-amber { background: var(--amber-l); border-color: var(--amber); color: var(--amber); transform: scale(1.08); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); }
+.nps-btn.sel-green { background: var(--green-l); border-color: var(--green); color: var(--green); transform: scale(1.08); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+.nps-labels { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 500; color: var(--muted); padding: 0 4px; }
+
+/* Score Badge */
+.score-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; margin-top: 8px; animation: slideUp 0.3s ease forwards; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Chips */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  padding: 10px 18px; border: 1px solid var(--border); border-radius: 30px;
+  background: #faf9f7; cursor: pointer; font-size: 0.85rem; font-weight: 500;
+  color: var(--muted); transition: all 0.2s ease; font-family: 'DM Sans', sans-serif;
+  user-select: none;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); transform: translateY(-2px); }
+.chip:active { transform: translateY(0); }
+.chip.on { background: var(--ink); border-color: var(--ink); color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(31, 24, 17, 0.15); }
+
+/* Textarea & Buttons */
+textarea {
+  width: 100%; padding: 16px; border: 1px solid var(--border);
+  border-radius: 16px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif;
+  color: var(--ink); background: #faf9f7; resize: vertical; min-height: 110px;
+  outline: none; transition: all 0.3s ease; line-height: 1.6;
+}
+textarea:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 4px var(--accent-light); }
+textarea::placeholder { color: #b5aaa0; }
+
+.submit-btn {
+  width: 100%; padding: 18px; background: linear-gradient(135deg, var(--ink) 0%, #3a2e24 100%);
+  color: white; border: none; border-radius: 16px; font-size: 1.05rem; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.3s ease;
+  margin-top: 10px; box-shadow: 0 4px 16px rgba(31, 24, 17, 0.2);
+}
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31, 24, 17, 0.3); }
+.submit-btn:active:not(:disabled) { transform: translateY(0); }
+.submit-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; transform: none; }
+
+.secondary-btn {
+  width: 100%; padding: 16px; background: white; color: var(--ink);
+  border: 1.5px solid var(--border); border-radius: 16px; font-size: 1rem;
+  font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer;
+  transition: all 0.2s ease; margin-top: 24px;
+}
+.secondary-btn:hover { border-color: var(--ink); background: #faf9f7; }
+
+/* Error & Thank You */
+.err {
+  background: var(--red-l); color: var(--red); border-radius: 12px;
+  padding: 14px 16px; font-size: 0.85rem; font-weight: 600; margin-top: 16px;
+  display: none; border: 1px solid rgba(225, 29, 72, 0.2);
+}
+.err.show { display: block; animation: shake 0.4s ease-in-out; }
+@keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-4px);} 75% {transform: translateX(4px);} }
+
+.thankyou { text-align: center; padding: 60px 24px; display: none; }
+.thankyou.show { display: block; animation: slideUp 0.5s ease; }
+.ty-icon { font-size: 4rem; margin-bottom: 20px; animation: pop 0.6s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { 0% {transform: scale(0) rotate(-10deg);} 80% {transform: scale(1.1) rotate(5deg);} 100% {transform: scale(1) rotate(0);} }
+.thankyou h2 { font-family: 'DM Serif Display', serif; font-size: 2.2rem; color: var(--ink); margin-bottom: 12px; }
+.thankyou p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 360px; margin: 0 auto; }
+.ty-tag { display: inline-block; background: var(--accent-light); color: var(--accent); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; font-weight: 600; margin-top: 24px; }
+
+/* Spinner */
+.spin {
+  border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white;
+  border-radius: 50%; width: 22px; height: 22px;
+  animation: sp 0.8s linear infinite; display: inline-block; vertical-align: middle; margin-right: 10px;
+}
+@keyframes sp { to { transform: rotate(360deg); } }
+
+@media(max-width: 480px) {
+  .header h1 { font-size: 2rem; }
+  .card { padding: 24px 20px; }
+  .nps-btn { font-size: 0.8rem; border-radius: 10px; }
+  .chip { padding: 8px 14px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    SOW · Lend A Hand India
+  </div>
+  <h1>How was your <em>experience?</em></h1>
+  <p>Takes less than 30 seconds. Your honest feedback helps us shape better programs.</p>
+</div>
+
+<div class="wrap">
+  <div id="survey-form">
+    <div class="card">
+      <div class="q-meta">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 33%"></div></div>
+      </div>
+      <div class="q-text">How likely are you to recommend SOW to a friend or colleague?</div>
+      <div class="nps-track">
+        <div class="nps-nums" id="nps-nums">
+          <button class="nps-btn" onclick="pickNps(0)">0</button>
+          <button class="nps-btn" onclick="pickNps(1)">1</button>
+          <button class="nps-btn" onclick="pickNps(2)">2</button>
+          <button class="nps-btn" onclick="pickNps(3)">3</button>
+          <button class="nps-btn" onclick="pickNps(4)">4</button>
+          <button class="nps-btn" onclick="pickNps(5)">5</button>
+          <button class="nps-btn" onclick="pickNps(6)">6</button>
+          <button class="nps-btn" onclick="pickNps(7)">7</button>
+          <button class="nps-btn" onclick="pickNps(8)">8</button>
+          <button class="nps-btn" onclick="pickNps(9)">9</button>
+          <button class="nps-btn" onclick="pickNps(10)">10</button>
+        </div>
+        <div class="nps-labels">
+          <span>Not likely</span>
+          <span>Extremely likely</span>
+        </div>
+        <div id="nps-badge" style="display:none" class="score-badge"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-meta">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 66%"></div></div>
+      </div>
+      <div class="q-text">Which area did you explore?</div>
+      <div class="chip-grid">
+        <div class="chip" onclick="pickSkill(this)">⚡ Electrical</div>
+        <div class="chip" onclick="pickSkill(this)">🪵 Carpentry</div>
+        <div class="chip" onclick="pickSkill(this)">💻 IT / Computers</div>
+        <div class="chip" onclick="pickSkill(this)">🍞 Baking</div>
+        <div class="chip" onclick="pickSkill(this)">🔩 Welding</div>
+        <div class="chip" onclick="pickSkill(this)">✨ Multiple</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-meta">
+        <div class="q-num">Question 3 of 3 (Optional)</div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+      </div>
+      <div class="q-text">Any other feedback for us?</div>
+      <textarea id="feedback" placeholder="What did you love? What could we do better?"></textarea>
+    </div>
+
+    <div class="err" id="form-err"></div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitNps()">
+      Submit Feedback →
+    </button>
+
+    <p style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:16px">
+      Your response is anonymous and helps us improve.
+    </p>
+  </div>
+
+  <div class="card thankyou" id="thankyou">
+    <div class="ty-icon">🙏</div>
+    <h2>Thank you!</h2>
+    <p>Your feedback means a lot to our team. We read every response and use it to make our sessions better.</p>
+    <div class="ty-tag">🛠️ Scope of Work</div>
+    
+    <button class="secondary-btn" onclick="resetForm()">Submit Another Response</button>
+  </div>
+</div>
+
+<script>
+// Keep using the exact same Google Apps Script Web App URL! 
+var NPS_URL = 'https://script.google.com/macros/s/AKfycbxVkRu8KWZ6LetW_tJ1qqp4AQH6h3BvNNDY73lE1PhxL8acTgLvOjiZf_lPQqQzDhfZ2w/exec';
+
+var npsScore = null;
+var selSkill = null;
+
+function pickNps(val) {
+  npsScore = val;
+  document.querySelectorAll('.nps-btn').forEach(function(b, i) {
+    b.classList.remove('sel-red','sel-amber','sel-green');
+    if (i === val) {
+      if (val <= 6)       b.classList.add('sel-red');
+      else if (val <= 8)  b.classList.add('sel-amber');
+      else                b.classList.add('sel-green');
+    }
+  });
+
+  var badge = document.getElementById('nps-badge');
+  badge.style.display = 'inline-flex';
+  if (val <= 6) {
+    badge.style.background = 'var(--red-l)'; badge.style.color = 'var(--red)';
+    badge.textContent = '😔 Detractor (0–6) — we\'ll work harder';
+  } else if (val <= 8) {
+    badge.style.background = 'var(--amber-l)'; badge.style.color = 'var(--amber)';
+    badge.textContent = '😊 Passive (7–8) — thanks, we\'ll keep improving';
+  } else {
+    badge.style.background = 'var(--green-l)'; badge.style.color = 'var(--green)';
+    badge.textContent = '🌟 Promoter (9–10) — you\'re amazing, thank you!';
+  }
+}
+
+function pickSkill(el) {
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  el.classList.add('on');
+  selSkill = el.textContent.trim();
+}
+
+async function submitNps() {
+  var err = document.getElementById('form-err');
+  err.classList.remove('show');
+
+  if (npsScore === null) {
+    err.textContent = '⚠️ Please select a score from 0 to 10.';
+    err.classList.add('show'); return;
+  }
+  if (!selSkill) {
+    err.textContent = '⚠️ Please select the area you explored.';
+    err.classList.add('show'); return;
+  }
+
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Submitting…';
+
+  // --- CHANGED PAYLOAD: Added 'tabName' so the Google Script knows where to put it ---
+  var payload = {
+    score:       npsScore,
+    skill:       selSkill,
+    feedback:    document.getElementById('feedback').value.trim(),
+    submittedAt: new Date().toLocaleString('en-IN'),
+    tabName:     'SOW_NPS' // Must match the tab name in your Google Sheet exactly!
+  };
+
+  try {
+    var res  = await fetch(NPS_URL, { method:'POST', body: JSON.stringify(payload) });
+    var text = await res.text();
+    var data = JSON.parse(text);
+    if (data && data.success) {
+      document.getElementById('survey-form').style.display = 'none';
+      document.getElementById('thankyou').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(data ? data.error : 'No response');
+    }
+  } catch(e) {
+    err.textContent = '⚠️ Could not submit — please try again. (' + e.message + ')';
+    err.classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Feedback →';
+  }
+}
+
+function resetForm() {
+  npsScore = null;
+  selSkill = null;
+
+  document.querySelectorAll('.nps-btn').forEach(b => b.classList.remove('sel-red','sel-amber','sel-green'));
+  document.getElementById('nps-badge').style.display = 'none';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  document.getElementById('feedback').value = '';
+  document.getElementById('form-err').classList.remove('show');
+  
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = false;
+  btn.innerHTML = 'Submit Feedback →';
+
+  document.getElementById('thankyou').classList.remove('show');
+  document.getElementById('survey-form').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
